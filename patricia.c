@@ -111,7 +111,7 @@ void printar_info(PatriciaNode *raiz){
     }
 }
 
-void pegar_rec(PatriciaNode *raiz){
+void printar_rec(PatriciaNode *raiz){
 
     if(raiz == NULL){
         return;
@@ -121,7 +121,7 @@ void pegar_rec(PatriciaNode *raiz){
         for(int i = 0; i <= raiz->bit; i++){
             printf("      ");
         }
-        pegar_rec(raiz->esq);
+        printar_rec(raiz->esq);
     }else{
         printf("\n");
     }
@@ -133,9 +133,61 @@ void pegar_rec(PatriciaNode *raiz){
         for(int i = 0; i <= raiz->bit; i++){
             printf("      ");
         }
-        pegar_rec(raiz->dir);
+        printar_rec(raiz->dir);
     }else{
         printf("\n");
+    }
+}
+
+void remover_solo(PatriciaNode *arvore, unsigned chave){
+    PatriciaNode *t = arvore;
+    if(arvore->esq->chave == chave){ // o filho esquerdo eh oq qr remover
+        t = t->esq;
+        if( t->esq == t ){
+            arvore->esq = t->dir;
+        }else{
+            arvore->esq = t->esq;
+        }
+        free(t);
+        return;
+    }
+
+    if(arvore->dir->chave == chave ){ // o filho direito eh oq qr remover
+        t = t->dir;
+        if( t->esq == t ){
+            arvore->dir = t->dir;
+        }else{
+            arvore->dir = t->esq;
+        }
+        free(t);
+        return;
+    }
+
+
+    if (bit(chave, arvore->bit) == 0){
+        remover_solo(arvore->esq, chave);
+    }else{
+        remover_solo(arvore->dir, chave);
+    }
+
+}
+
+void remover(PatriciaNode *raiz, unsigned chave){
+    PatriciaNode *t = busca_rec(raiz->esq,chave,-1);
+    if( t->chave == chave ){ // a chave existe
+        if( t->esq == t || t->dir == t ){ // um ponteiro apontado pra ele
+            remover_solo(raiz, chave);
+        }else{ // nenhum ponteiro sobre ele
+
+
+
+        }
+
+        printf("encontrou");
+        return;
+    } else{ // chave nao existe
+        printf("Nao encontrada\n");
+        return;
     }
 }
 
@@ -154,7 +206,7 @@ void main(){
         printf("\n\n1- Inserir chave\n");
         printf("2- Buscar chave\n");
         printf("3- Printar arvore\n");
-        printf("4- Remover ( nao funcionando )\n");
+        printf("4- Remover\n");
 
         printf("99- Sair\n\n");
 
@@ -190,11 +242,15 @@ void main(){
                 break;
 
             case 3:
-                pegar_rec(raiz);
+                printar_rec(raiz);
                 break;
 
             case 4:
-                //remover;
+                printf("Qual valor deseja remover: ");
+                fflush(stdin);
+                scanf("%u",&chave);
+
+                remover(raiz, chave);
                 break;
 
             default:
