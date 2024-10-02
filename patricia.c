@@ -183,7 +183,7 @@ void remover(PatriciaNode *raiz, unsigned chave){
 
         }
 
-        printf("encontrou");
+        printf("Removido com sucesso\n");
         return;
     } else{ // chave nao existe
         printf("Nao encontrada\n");
