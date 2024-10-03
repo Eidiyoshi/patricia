@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include <math.h>
 
+// Trabalho ED2 arvore patricia
+// Cristian Eidi Yoshimura
+// a raiz max int sempre usa a arvore a esquerda
+
+
 int tamanho;
 
 typedef struct patricia_node {
@@ -94,18 +99,18 @@ void printar_info(PatriciaNode *raiz){
     itoa(raiz->chave, buffer, 2); // transformacao da chave pra binario
 
     char zeros[tamanho];
-    strcpy(zeros,"");
+    strcpy(zeros,""); // nullificando os 0 q serao printados
 
     int contador = tamanho, modificador = strlen(buffer);
     while( ( contador - modificador ) > 0 ){
         strcat(zeros, "0");
-        modificador++;
+        modificador++; // complementar os 0 a esquerda
     }
 
     strcat(zeros,buffer);
 
     if(raiz->bit == -1){
-        printf("Bit: -1, Chave:MAX_INT\n");
+        printf("Bit: -1, Chave:MAX_INT\n"); // printar o max int sendo o tamanho de bits desejado menor que o max int dava problemas
     }else{
         printf("Bit: %d, Chave: %s\n", raiz->bit, zeros );
     }
@@ -117,6 +122,17 @@ void printar_rec(PatriciaNode *raiz){
         return;
     }
 
+    if( raiz->dir->bit > raiz->bit){
+        for(int i = 0; i <= raiz->bit; i++){
+            printf("      ");
+        }
+        printar_rec(raiz->dir);
+    }else{
+        printf("\n");
+    }
+
+    printar_info(raiz);
+
     if( raiz->esq->bit > raiz->bit ){
         for(int i = 0; i <= raiz->bit; i++){
             printf("      ");
@@ -126,17 +142,6 @@ void printar_rec(PatriciaNode *raiz){
         printf("\n");
     }
 
-    printar_info(raiz);
-
-    if( raiz->dir->bit > raiz->bit){
-
-        for(int i = 0; i <= raiz->bit; i++){
-            printf("      ");
-        }
-        printar_rec(raiz->dir);
-    }else{
-        printf("\n");
-    }
 }
 
 void remover_solo(PatriciaNode *arvore, unsigned chave){
@@ -193,7 +198,8 @@ void remover(PatriciaNode *raiz, unsigned chave){
 
 void main(){
     printf("Bem vindo trabalho arvore Patricia\n");
-    printf("Os inputs sao numeros reais nao binarios\n\n");
+    printf("Os inputs sao numeros reais nao binarios\n");
+    printf("O print eh horizontal, com a primeira arvore a esquerda da raiz\n");
 
     printf("Digite o tamanho das chaves binarias: ");
     scanf("%d", &tamanho);
@@ -205,7 +211,7 @@ void main(){
     do{
         printf("\n\n1- Inserir chave\n");
         printf("2- Buscar chave\n");
-        printf("3- Printar arvore\n");
+        printf("3- Printar arvore horizontalmente\n");
         printf("4- Remover\n");
 
         printf("99- Sair\n\n");
@@ -218,15 +224,29 @@ void main(){
         switch(escolha){
             case 1:
                 printf("Valor que deseja inserir: ");
-
                 scanf("%u",&chave);
 
-                if( pow(2,tamanho) - 1 <= chave  ){
-                    printf("\nATENCAO!!! VALOR EXCEDIDO, POR FAVOR DIGITE OUTRO !!!\n");
-                }else{
-                    insere(raiz,chave);
-                    printf("Valor inserido com sucesso");
+                if( (pow(2,tamanho) <= chave) ){
+                    printf("\Atencao! Valor excedido, por favor digite outro!\n");
+                    system("pause");
+                    break;
                 }
+
+                if( chave == 0 ){
+                    printf("\nVoce parace ter escrito um valor invalido\nSeu valor eh o numero 0?");
+                    printf(" Caso o valor inserido seja 0, insira 1, caso contrario, insira 0: ");
+                    int certeza;
+                    fflush(stdin);
+                    scanf("%d",&certeza);
+                    if(!certeza){
+                        printf("saindo...");
+                        break;
+                    }
+                }
+
+                insere(raiz,chave);
+                printf("Valor inserido com sucesso");
+                printar_rec(raiz);
                 break;
 
             case 2:
@@ -254,6 +274,7 @@ void main(){
                 break;
 
             default:
+                printf("?");
                 break;
         }
 
