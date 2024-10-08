@@ -112,7 +112,7 @@ void printar_info(PatriciaNode *raiz){
     if(raiz->bit == -1){
         printf("Bit: -1, Chave:MAX_INT\n"); // printar o max int sendo o tamanho de bits desejado menor que o max int dava problemas
     }else{
-        printf("Bit: %d, Chave: %s\n", raiz->bit, zeros );
+        printf("Bit: %d, Chave: %s, Valor: %d\n", raiz->bit, zeros, raiz->chave );
     }
 }
 
@@ -223,7 +223,6 @@ void removerMeio(PatriciaNode *arvore, unsigned chave){
     }
 
     free(ponteiroDebaixo);
-
 }
 
 void remover(PatriciaNode *raiz, unsigned chave){
