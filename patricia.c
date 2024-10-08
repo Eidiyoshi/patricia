@@ -144,13 +144,14 @@ void printar_rec(PatriciaNode *raiz){
 
 }
 
-void removerSolo(PatriciaNode *arvore, unsigned chave){
-    PatriciaNode *t = arvore;
+void removerSolo(PatriciaNode *arvore, unsigned chave){ // funcao de recursao pra
+    PatriciaNode *t;                                    // procurar o pai
+
     if(arvore->esq->chave == chave){ // o filho esquerdo eh oq qr remover
-        t = t->esq;
-        if( t->esq == t ){
+        t = arvore->esq;
+        if( t->esq == t ){ // se apontando pra esquerda
             arvore->esq = t->dir;
-        }else{
+        }else{ // se apontando pra direita
             arvore->esq = t->esq;
         }
         free(t);
@@ -158,10 +159,10 @@ void removerSolo(PatriciaNode *arvore, unsigned chave){
     }
 
     if(arvore->dir->chave == chave ){ // o filho direito eh oq qr remover
-        t = t->dir;
-        if( t->esq == t ){
+        t = arvore->dir;
+        if( t->esq == t ){ // se apontando pra esquerda
             arvore->dir = t->dir;
-        }else{
+        }else{ // se apontando pra direita
             arvore->dir = t->esq;
         }
         free(t);
@@ -180,7 +181,9 @@ void removerSolo(PatriciaNode *arvore, unsigned chave){
 void removerMeio(PatriciaNode *arvore, unsigned chave){
     PatriciaNode *ponteiroDebaixo = arvore;
     PatriciaNode *paiDebaixo;
-    while( ponteiroDebaixo->esq->chave != chave && ponteiroDebaixo->dir->chave != chave ){
+    while( ponteiroDebaixo->esq->chave != chave  // achando o ponteiro q aponta para
+        && ponteiroDebaixo->dir->chave != chave )// o no que quer remover
+    {
         if( bit(chave, ponteiroDebaixo->bit ) == 0 ){
             paiDebaixo = ponteiroDebaixo;
             ponteiroDebaixo = ponteiroDebaixo->esq;
@@ -190,9 +193,11 @@ void removerMeio(PatriciaNode *arvore, unsigned chave){
         }
     }
 
-    PatriciaNode *ponteiroMaisBaixo = ponteiroDebaixo; // achar o q aponta pro ponteiroDebaixo
-    while( ponteiroMaisBaixo->esq->chave != ponteiroDebaixo->chave && ponteiroMaisBaixo->dir->chave != ponteiroDebaixo->chave &&
-           ponteiroMaisBaixo->bit >= ponteiroDebaixo->bit ){
+    PatriciaNode *ponteiroMaisBaixo = ponteiroDebaixo; // achar o no que esta apontando para o debaixo
+    while( ponteiroMaisBaixo->esq->chave != ponteiroDebaixo->chave
+          && ponteiroMaisBaixo->dir->chave != ponteiroDebaixo->chave
+          && ponteiroMaisBaixo->bit >= ponteiroDebaixo->bit ) // so pra ter certeza que o negocio nao vai subir
+    {
         if( bit(chave, ponteiroMaisBaixo->bit ) == 0 ){
             ponteiroMaisBaixo = ponteiroMaisBaixo->esq;
         }else{
@@ -208,8 +213,9 @@ void removerMeio(PatriciaNode *arvore, unsigned chave){
         ponteiroMaisBaixo->dir = arvore;
     }
 
-    if( paiDebaixo->esq == ponteiroDebaixo ){ // "sumir" com o no do ponteiro debaixo, fazendo com q o pai aponte pro filho q n seja
-        if( ponteiroDebaixo->esq == arvore ){ // a chave a deletar
+    // "sumir" com o no do debaixo, fazendo com q o pai aponte pro debaixo aponte pro filho do debaixo
+    if( paiDebaixo->esq == ponteiroDebaixo ){
+        if( ponteiroDebaixo->esq == arvore ){
             paiDebaixo->esq = ponteiroDebaixo->dir;
         }else{
             paiDebaixo->esq = ponteiroDebaixo->esq;
@@ -222,7 +228,7 @@ void removerMeio(PatriciaNode *arvore, unsigned chave){
         }
     }
 
-    free(ponteiroDebaixo);
+    free(ponteiroDebaixo); //liberando o no que foi copiado
 }
 
 void remover(PatriciaNode *raiz, unsigned chave){
@@ -230,7 +236,7 @@ void remover(PatriciaNode *raiz, unsigned chave){
     if( t->chave == chave ){ // a chave existe
         if( t->esq == t || t->dir == t ){ // um ponteiro apontado pra ele
             removerSolo(raiz, chave);
-        }else{ // nenhum ponteiro sobre ele
+        }else{ // nenhum ponteiro apontando pra ele mesmo
             removerMeio(t, chave);
         }
 
