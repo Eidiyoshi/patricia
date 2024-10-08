@@ -144,7 +144,7 @@ void printar_rec(PatriciaNode *raiz){
 
 }
 
-void remover_solo(PatriciaNode *arvore, unsigned chave){
+void removerSolo(PatriciaNode *arvore, unsigned chave){
     PatriciaNode *t = arvore;
     if(arvore->esq->chave == chave){ // o filho esquerdo eh oq qr remover
         t = t->esq;
@@ -170,10 +170,59 @@ void remover_solo(PatriciaNode *arvore, unsigned chave){
 
 
     if (bit(chave, arvore->bit) == 0){
-        remover_solo(arvore->esq, chave);
+        removerSolo(arvore->esq, chave);
     }else{
-        remover_solo(arvore->dir, chave);
+        removerSolo(arvore->dir, chave);
     }
+
+}
+
+void removerMeio(PatriciaNode *arvore, unsigned chave){
+    PatriciaNode *ponteiroDebaixo = arvore;
+    PatriciaNode *paiDebaixo;
+    while( ponteiroDebaixo->esq->chave != chave && ponteiroDebaixo->dir->chave != chave ){
+        if( bit(chave, ponteiroDebaixo->bit ) == 0 ){
+            paiDebaixo = ponteiroDebaixo;
+            ponteiroDebaixo = ponteiroDebaixo->esq;
+        }else{
+            paiDebaixo = ponteiroDebaixo;
+            ponteiroDebaixo = ponteiroDebaixo->dir;
+        }
+    }
+
+    PatriciaNode *ponteiroMaisBaixo = ponteiroDebaixo; // achar o q aponta pro ponteiroDebaixo
+    while( ponteiroMaisBaixo->esq->chave != ponteiroDebaixo->chave && ponteiroMaisBaixo->dir->chave != ponteiroDebaixo->chave &&
+           ponteiroMaisBaixo->bit >= ponteiroDebaixo->bit ){
+        if( bit(chave, ponteiroMaisBaixo->bit ) == 0 ){
+            ponteiroMaisBaixo = ponteiroMaisBaixo->esq;
+        }else{
+            ponteiroMaisBaixo = ponteiroMaisBaixo->dir;
+        }
+    }
+
+    arvore->chave = ponteiroDebaixo->chave; // transformando a chave a deletar no cara q aponta pra ela
+
+    if( ponteiroMaisBaixo->esq == ponteiroDebaixo ){ // oq apontava pro debaixo agr aponta pra o original
+        ponteiroMaisBaixo->esq = arvore;
+    }else{
+        ponteiroMaisBaixo->dir = arvore;
+    }
+
+    if( paiDebaixo->esq == ponteiroDebaixo ){ // "sumir" com o no do ponteiro debaixo, fazendo com q o pai aponte pro filho q n seja
+        if( ponteiroDebaixo->esq == arvore ){ // a chave a deletar
+            paiDebaixo->esq = ponteiroDebaixo->dir;
+        }else{
+            paiDebaixo->esq = ponteiroDebaixo->esq;
+        }
+    }else{ // ponteiro do pai para o debaixo for pra direita
+        if( ponteiroDebaixo->esq == arvore ){
+            paiDebaixo->dir = ponteiroDebaixo->dir;
+        }else{
+            paiDebaixo->dir = ponteiroDebaixo->esq;
+        }
+    }
+
+    free(ponteiroDebaixo);
 
 }
 
@@ -181,17 +230,16 @@ void remover(PatriciaNode *raiz, unsigned chave){
     PatriciaNode *t = busca_rec(raiz->esq,chave,-1);
     if( t->chave == chave ){ // a chave existe
         if( t->esq == t || t->dir == t ){ // um ponteiro apontado pra ele
-            remover_solo(raiz, chave);
+            removerSolo(raiz, chave);
         }else{ // nenhum ponteiro sobre ele
-
-
-
+            removerMeio(t, chave);
         }
 
         printf("Removido com sucesso\n");
         return;
     } else{ // chave nao existe
         printf("Nao encontrada\n");
+        system("pause");
         return;
     }
 }
@@ -233,7 +281,7 @@ void main(){
                 }
 
                 if( chave == 0 ){
-                    printf("\nVoce parace ter escrito um valor invalido\nSeu valor eh o numero 0?");
+                    printf("\nVoce parece ter escrito um valor invalido\nSeu valor eh o numero 0?");
                     printf(" Caso o valor inserido seja 0, insira 1, caso contrario, insira 0: ");
                     int certeza;
                     fflush(stdin);
@@ -271,6 +319,7 @@ void main(){
                 scanf("%u",&chave);
 
                 remover(raiz, chave);
+                printar_rec(raiz);
                 break;
 
             default:
