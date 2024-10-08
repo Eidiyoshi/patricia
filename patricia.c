@@ -273,7 +273,7 @@ void main(){
                 printf("Valor que deseja inserir: ");
                 scanf("%u",&chave);
 
-                if( (pow(2,tamanho) <= chave) ){
+                if( (pow(2,tamanho) - 1 <= chave) ){
                     printf("\Atencao! Valor excedido, por favor digite outro!\n");
                     system("pause");
                     break;
